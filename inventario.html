@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="shortcut icon" href="Imagens/favicon.ico" type="image/x-icon">
+    <title>Bolsa de Provisões</title>
+    <style>
+        :root { --fundo: #e6dabe; --cartao: #f4ecd8; --texto: #3b2a1a; --borda: #6b4c3a; --botao: #4a3627; --carmesim: #8c2a2a; --verde-musgo: #3a5a30; }
+        *, *::before, *::after { box-sizing: border-box; }
+        body { font-family: 'Georgia', serif; background-color: var(--fundo); color: var(--texto); margin: 0; padding: 20px; display: flex; flex-direction: column; align-items: center; }
+        
+        .header { width: 100%; max-width: 800px; display: flex; justify-content: space-between; align-items: center; border-bottom: 3px solid var(--borda); padding-bottom: 15px; margin-bottom: 20px; }
+        .header h1 { margin: 0; color: var(--texto); }
+        
+        button, .btn-link { font-family: 'Georgia', serif; background: var(--botao); color: var(--cartao); border: none; padding: 10px 20px; border-radius: 4px; cursor: pointer; font-weight: bold; text-decoration: none; display: inline-block; }
+        .btn-perigo { background-color: var(--carmesim); }
+        .btn-link-voltar { background: var(--fundo); border: 2px solid var(--borda); color: var(--texto); }
+
+        #inventario-container { width: 100%; max-width: 800px; display: flex; flex-direction: column; gap: 15px; }
+        .item-card { background-color: var(--cartao); border: 2px solid var(--borda); padding: 20px; border-radius: 4px; display: flex; justify-content: space-between; align-items: center; box-shadow: 2px 2px 4px rgba(0,0,0,0.1); }
+        .item-info h3 { margin: 0 0 5px 0; color: var(--carmesim); }
+        .item-preco { font-weight: bold; color: var(--verde-musgo); font-size: 1.2rem; margin-right: 15px; }
+    </style>
+</head>
+<body>
+
+    <div class="header">
+        <h1>Bolsa de: <span id="usuario-titulo" style="color: var(--carmesim);">Ninguém</span> 🎒</h1>
+        <div style="display:flex; gap:10px;"> 
+            <a href="/" class="btn-link btn-link-voltar">Retornar</a> 
+            <button onclick="limparInventario()" class="btn-perigo">Esvaziar Bolsa</button> 
+        </div>
+    </div>
+
+    <div id="inventario-container"></div>
+    <div id="bloco-finalizar" style="width:100%; max-width:800px; margin-top:20px; text-align:right; display:none;"> 
+        <!-- Redirecionamento modificado para checkout.html -->
+        <button onclick="location.href='checkout.html'" style="background:var(--verde-musgo); font-size:1.1rem;">Partir em Jornada (Finalizar) ➔</button> 
+    </div>
+
+    <script>
+        let chaveInventario = '';
+        function carregarInventario() {
+            const user = localStorage.getItem('usuarioAtivo');
+            const container = document.getElementById("inventario-container");
+            const blocoFinalizar = document.getElementById("bloco-finalizar");
+            
+            if (!user) { container.innerHTML = '<p style="text-align:center;">Identifique-se primeiro.</p>'; blocoFinalizar.style.display = "none"; return; }
+            if (user === 'admin') { container.innerHTML = '<p style="text-align:center;">O Mestre não possui bolsa de compras.</p>'; blocoFinalizar.style.display = "none"; return; }
+
+            document.getElementById('usuario-titulo').innerText = user;
+            chaveInventario = `inventario_${user}`;
+            container.innerHTML = "";
+            const salvos = JSON.parse(localStorage.getItem(chaveInventario)) || [];
+
+            if (salvos.length === 0) { container.innerHTML = '<p style="text-align:center; font-style:italic;">Sua bolsa está vazia. Volte ao armazém!</p>'; blocoFinalizar.style.display = "none"; return; }
+            blocoFinalizar.style.display = "block";
+
+            salvos.forEach((item, index) => {
+                container.innerHTML += `
+                    <div class="item-card">
+                        <div class="item-info">
+                            <h3>${item.nome}</h3>
+                            <p style="margin:0; font-size:0.9rem;">Classes: ${item.classe.join(', ')}</p>
+                        </div>
+                        <div style="display:flex; align-items:center;">
+                            <span class="item-preco">${item.preco}</span>
+                            <button class="btn-perigo" onclick="removerItemIndividual(${index})">Descartar</button>
+                        </div>
+                    </div>
+                `;
+            });
+        }
+        function removerItemIndividual(pos) { let salvos = JSON.parse(localStorage.getItem(chaveInventario)) || []; salvos.splice(pos, 1); localStorage.setItem(chaveInventario, JSON.stringify(salvos)); carregarInventario(); }
+        function limparInventario() { if(chaveInventario && confirm("Deseja esvaziar tudo?")) { localStorage.removeItem(chaveInventario); carregarInventario(); } }
+        window.onload = carregarInventario;
+    </script>
+</body>
+</html>
