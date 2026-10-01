@@ -1,0 +1,138 @@
+:root {
+    --fundo: #e6dabe;
+    --cartao: #f4ecd8;
+    --texto: #3b2a1a;
+    --borda: #6b4c3a;
+    --borda-fina: #a68a6b;
+    --botao: #4a3627;
+    --botao-hover: #312217;
+    --carmesim: #8c2a2a;
+    --verde-musgo: #3a5a30;
+}
+
+*, *::before, *::after { 
+    box-sizing: border-box; 
+}
+
+body { 
+    font-family: 'Georgia', 'Times New Roman', serif; 
+    background-color: var(--fundo); 
+    color: var(--texto); 
+    margin: 0; 
+    /* O padding-top de 180px do index irá para o CSS do componente específico, não no global! */
+}
+
+/* CSS dos botões comuns aqui */
+button { 
+    font-family: 'Georgia', serif; 
+    background-color: var(--botao); 
+    color: var(--cartao); 
+    border: 2px solid var(--botao); 
+    padding: 8px 15px; 
+    border-radius: 4px; 
+    cursor: pointer; 
+    font-weight: bold; 
+}
+button:hover { background-color: var(--botao-hover); }
+.btn-perigo { background-color: var(--carmesim); border-color: var(--carmesim); }
+
+/* --- RESPONSIVIDADE DO CABEÇALHO --- */
+.btn-sanduiche {
+  display: none; /* Escondido no computador */
+  background: none;
+  border: none;
+  font-size: 2rem;
+  cursor: pointer;
+  color: var(--texto);
+}
+
+.usuario-mobile {
+  display: none; /* Área de usuário extra escondida no computador */
+}
+
+.menu-colapsavel {
+  display: block; /* Mostra os filtros normalmente no computador */
+}
+
+/* Regras para Celulares e Tablets */
+@media (max-width: 768px) {
+  .btn-sanduiche {
+    display: block; /* Mostra o ícone ☰ */
+  }
+  
+  .usuario-desktop {
+    display: none !important; /* Esconde os botões do lado da logo */
+  }
+  
+  .usuario-mobile {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    padding-bottom: 15px;
+    margin-bottom: 15px;
+    border-bottom: 1px dashed var(--borda-fina);
+  }
+  
+  .usuario-mobile button, .usuario-mobile a {
+    width: 100%;
+    text-align: center;
+  }
+
+  .menu-colapsavel {
+    display: none; /* Esconde os filtros e menus por padrão no celular */
+    margin-top: 15px;
+  }
+  
+  .menu-colapsavel.aberto {
+    display: block; /* Mostra tudo quando clica no sanduíche */
+  }
+
+  .area-filtros {
+    flex-direction: column !important;
+    align-items: stretch !important;
+  }
+  
+  .botoes-classes {
+    justify-content: center;
+  }
+}
+
+/* --- JANELA MODAL DE LOGIN --- */
+.modal-overlay {
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(0, 0, 0, 0.75);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 9999;
+  backdrop-filter: blur(3px);
+}
+
+.modal-conteudo {
+  background: var(--cartao);
+  padding: 30px;
+  border: 3px solid var(--borda);
+  border-radius: 8px;
+  width: 90%;
+  max-width: 400px;
+  position: relative;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+}
+
+.modal-fechar {
+  position: absolute;
+  top: 10px; right: 15px;
+  background: none; border: none;
+  font-size: 1.5rem; cursor: pointer;
+  color: var(--carmesim);
+}
+
+.modal-form {
+  display: flex; flex-direction: column; gap: 15px; margin-top: 20px;
+}
+
+.modal-form input {
+  padding: 12px; border: 2px solid var(--borda); border-radius: 4px;
+  background: var(--fundo); color: var(--texto); font-family: inherit;
+}
